@@ -84,7 +84,7 @@ if [ -n "$move_branches" ]; then
   echo "----------------------------------------"
   echo ""
 
-  read -p "위 브랜치들을 move하시겠습니까? (y/n): " confirm_move
+  read -p "위 브랜치들을 move하시겠습니까? [y/n]: " confirm_move
 
   case $confirm_move in
     [yY]|[yY][eE][sS])
@@ -156,7 +156,7 @@ if [ -n "$untrack_branches" ]; then
   echo "----------------------------------------"
   echo ""
 
-  read -p "위 브랜치들을 untrack하시겠습니까? (y/n): " confirm_untrack
+  read -p "위 브랜치들을 untrack하시겠습니까? [y/n]: " confirm_untrack
 
   case $confirm_untrack in
     [yY]|[yY][eE][sS])

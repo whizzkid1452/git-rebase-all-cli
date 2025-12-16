@@ -63,7 +63,9 @@ chmod +x gt-push-all
 
 ## 설치
 
-### npm을 통한 설치 (권장)
+### 전역 설치 (권장)
+
+전역 설치를 하면 시스템 어디서든 `gt-sync`와 `gt-push-all` 명령어를 사용할 수 있습니다.
 
 ```bash
 npm install -g git-rebase-all-cli
@@ -73,6 +75,40 @@ npm install -g git-rebase-all-cli
 
 ```bash
 pnpm add -g git-rebase-all-cli
+```
+
+**전역 설치 후 사용법:**
+```bash
+# Git 저장소 어디서든 실행 가능
+cd /path/to/your/git/repo
+gt-sync
+# 또는
+gt-push-all
+```
+
+### 로컬 설치
+
+특정 프로젝트에만 설치하려면:
+
+```bash
+npm install git-rebase-all-cli
+```
+
+또는
+
+```bash
+pnpm add git-rebase-all-cli
+```
+
+**로컬 설치 후 사용법:**
+```bash
+# npx를 사용하여 실행
+npx gt-sync
+npx gt-push-all
+
+# 또는 직접 경로 지정
+./node_modules/.bin/gt-sync
+./node_modules/.bin/gt-push-all
 ```
 
 **설치 시 자동으로:**
