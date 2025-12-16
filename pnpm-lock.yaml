@@ -6,4 +6,44 @@ settings:
 
 importers:
 
-  .: {}
+  .:
+    dependencies:
+      '@withgraphite/graphite-cli':
+        specifier: ^1.7.12
+        version: 1.7.12
+      git:
+        specifier: '*'
+        version: 0.1.5
+
+packages:
+
+  '@withgraphite/graphite-cli@1.7.12':
+    resolution: {integrity: sha512-7w2/UhvadvLDvEqV4+G36jbo6wK3BDuvKSMD3W7XFQraJ7lg5TDsvRXORoMD6avDwkWSE2QrGUcvtpDh7xrqFg==}
+    engines: {node: '>=16'}
+    hasBin: true
+
+  git@0.1.5:
+    resolution: {integrity: sha512-N+bfOrXyKMU/fQtCj6D/U9MQOEN0DAA8TLHSLdUQRSWBOkeRvsjJHdrdkvcq05xO7GSDKWc3nDEGoTZ4DfCCSg==}
+    engines: {node: '>=0.4.0'}
+
+  mime@1.2.9:
+    resolution: {integrity: sha512-WiLgbHTIq5AYUvU/Luli4mZ1bUcHpGNHyCsbl+KPMg4zt+XUDpQehWjuBjdLaEvDTinvKj/FgfQt3fPoT7j08g==}
+
+  semver@7.7.3:
+    resolution: {integrity: sha512-SdsKMrI9TdgjdweUSR9MweHA4EJ8YxHn8DFaDisvhVlUOe4BF1tLD7GAj0lIqWVl+dPb/rExr0Btby5loQm20Q==}
+    engines: {node: '>=10'}
+    hasBin: true
+
+snapshots:
+
+  '@withgraphite/graphite-cli@1.7.12':
+    dependencies:
+      semver: 7.7.3
+
+  git@0.1.5:
+    dependencies:
+      mime: 1.2.9
+
+  mime@1.2.9: {}
+
+  semver@7.7.3: {}

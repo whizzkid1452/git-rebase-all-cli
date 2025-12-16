@@ -6,7 +6,16 @@
     "gt-sync": "./gt-sync",
     "gt-push-all": "./gt-push-all"
   },
-  "scripts": {},
+  "scripts": {
+    "postinstall": "node scripts/check-dependencies.js"
+  },
+  "dependencies": {
+    "@withgraphite/graphite-cli": "^1.7.12"
+  },
+  "peerDependencies": {
+    "git": "*"
+  },
+  "optionalDependencies": {},
   "keywords": [
     "git",
     "git-town",
@@ -15,7 +24,7 @@
     "fzf",
     "cli"
   ],
-  "author": "Your Name <your.email@example.com>",
+  "author": "whizzkid1452 <whizzkid1452@gmail.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -24,7 +33,8 @@
   "files": [
     "gt-sync",
     "gt-push-all",
-    "README.md"
+    "README.md",
+    "scripts"
   ],
   "engines": {
     "node": ">=14.0.0"

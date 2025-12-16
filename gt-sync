@@ -1,5 +1,39 @@
 #!/bin/bash
 
+# gt 명령어 찾기 (시스템 또는 npm 설치된 버전)
+find_gt() {
+  # 먼저 시스템 PATH에서 찾기
+  if command -v gt >/dev/null 2>&1; then
+    echo "gt"
+    return
+  fi
+  
+  # npm으로 설치된 경우 node_modules/.bin/gt 찾기
+  local script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  local npm_gt="$script_dir/../node_modules/.bin/gt"
+  if [ -f "$npm_gt" ]; then
+    echo "$npm_gt"
+    return
+  fi
+  
+  # 현재 디렉토리 기준으로도 찾기
+  local current_gt="$(pwd)/node_modules/.bin/gt"
+  if [ -f "$current_gt" ]; then
+    echo "$current_gt"
+    return
+  fi
+  
+  # 찾지 못함
+  echo ""
+}
+
+GT_CMD=$(find_gt)
+if [ -z "$GT_CMD" ]; then
+  echo "❌ 'gt' 명령어를 찾을 수 없습니다."
+  echo "   Graphite CLI를 설치해주세요: npm install -g @withgraphite/graphite-cli"
+  exit 1
+fi
+
 # Git repository root 찾기 및 이동
 git_root=$(git rev-parse --show-toplevel 2>/dev/null) || {
   echo "❌ Git repository를 찾을 수 없습니다. Git repository 내에서 실행해주세요."
@@ -14,7 +48,7 @@ cd "$git_root" || {
 echo "$git_root"
 
 # 모든 브랜치 목록 가져오기 (트리 문자열과 심볼릭 제거)
-all_branches=$(git log short | sed 's/^develop$//' | grep -v '^$' | grep -v '^develop$' | sed 's/\(needs restack\)//')
+all_branches=$($GT_CMD log short | sed 's/^develop$//' | grep -v '^$' | grep -v '^develop$' | sed 's/\(needs restack\)//')
 
 if [ -z "$all_branches" ]; then
   echo "❌ 추적 중인 브랜치가 없습니다."
@@ -62,7 +96,7 @@ if [ -n "$move_branches" ]; then
           branch=$(echo "$branch" | sed -E 's/^[*+]?[[:space:]]*//' | sed -E 's/([[:space:]])*$//' | sed 's/(needs restack)//')
           if [ -n "$branch" ]; then
             echo "💬 Moving $branch..."
-            git checkout "$branch" && gt move < /dev/tty
+            git checkout "$branch" && $GT_CMD move < /dev/tty
             if [ $? -eq 0 ]; then
               echo "✅ $branch move 완료"
             else
@@ -86,7 +120,7 @@ else
 fi
 
 # 브랜치 목록 새로고침 (Move 후 상태 반영)
-all_branches=$(gt log short | sed 's/^develop$//' | grep -v '^$' | grep -v '^develop$' | sed 's/\(needs restack\)//')
+all_branches=$($GT_CMD log short | sed 's/^develop$//' | grep -v '^$' | grep -v '^develop$' | sed 's/\(needs restack\)//')
 
 if [ -z "$all_branches" ]; then
   echo "❌ 더 이상 추적 중인 브랜치가 없습니다."
@@ -134,7 +168,7 @@ if [ -n "$untrack_branches" ]; then
           branch=$(echo "$branch" | sed -E 's/^[*+]?[[:space:]]*//' | sed -E 's/([[:space:]])*$//' | sed 's/(needs restack)//')
           if [ -n "$branch" ]; then
             echo "💬 Untracking $branch..."
-            if gt untrack "$branch"; then
+            if $GT_CMD untrack "$branch"; then
               echo "✅ $branch untrack 완료"
             else
               echo "❌ $branch untrack 실패"
