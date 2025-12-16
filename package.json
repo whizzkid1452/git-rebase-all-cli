@@ -1,6 +1,6 @@
 {
   "name": "git-rebase-all-cli",
-  "version": "1.1.6",
+  "version": "1.1.7",
   "description": "Git Town 브랜치 관리 스크립트 (gt-sync, gt-push-all)",
   "bin": {
     "gt-sync": "./gt-sync",
