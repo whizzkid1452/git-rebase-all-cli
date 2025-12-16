@@ -106,10 +106,10 @@ Git 저장소 루트에서 실행:
 git-rebase-all
 ```
 
-또는 짧은 명령어:
+또는 짧은 단축키:
 
 ```bash
-gt-rebase-all
+gra
 ```
 
 ### 실행 흐름
@@ -128,16 +128,19 @@ gt-rebase-all
 **상황**: 여러 PR 브랜치가 있고, `main`이 업데이트되어 모든 브랜치를 rebase해야 하는 경우
 
 예를 들어:
+
 - `feature/A` 브랜치에서 작업 중
 - `main`이 업데이트되어 `feature/A`를 rebase해야 함
 - `feature/B`, `feature/C`도 rebase가 필요
 
 **이 경우**:
+
 - `feature/A`에서 실행해도 됩니다 ✅
 - `main`에서 실행해도 됩니다 ✅
 - 다른 브랜치에서 실행해도 됩니다 ✅
 
 **도구가 자동으로**:
+
 1. `main`으로 전환하여 업데이트
 2. 선택한 브랜치들(`feature/A`, `feature/B`, `feature/C`)을 각각 체크아웃하여 rebase
 

@@ -6,7 +6,7 @@
   "main": "dist/index.js",
   "bin": {
     "git-rebase-all": "dist/cli.js",
-    "gt-rebase-all": "dist/cli.js"
+    "gra": "dist/cli.js"
   },
   "scripts": {
     "build": "tsc && node scripts/add-shebang.js",
