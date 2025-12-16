@@ -173,6 +173,21 @@ function checkFzf() {
   return hasFzf;
 }
 
+// Ensure script files have execute permissions
+const scriptDir = path.join(__dirname, '..');
+const scripts = ['gt-sync', 'gt-push-all'];
+
+scripts.forEach(script => {
+  const scriptPath = path.join(scriptDir, script);
+  if (fs.existsSync(scriptPath)) {
+    try {
+      fs.chmodSync(scriptPath, 0o755);
+    } catch (error) {
+      // Ignore chmod errors (e.g., on Windows)
+    }
+  }
+});
+
 console.log(`${colors.blue}Checking dependencies for git-rebase-all-cli...${colors.reset}\n`);
 
 const results = {

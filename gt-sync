@@ -48,10 +48,12 @@ cd "$git_root" || {
 echo "$git_root"
 
 # 모든 브랜치 목록 가져오기 (트리 문자열과 심볼릭 제거)
-all_branches=$($GT_CMD log short | sed 's/^develop$//' | grep -v '^$' | grep -v '^develop$' | sed 's/\(needs restack\)//')
+all_branches=$($GT_CMD log short 2>&1 | sed 's/^develop$//' | grep -v '^$' | grep -v '^develop$' | sed 's/\(needs restack\)//' | grep -v 'ERROR:')
 
 if [ -z "$all_branches" ]; then
   echo "❌ 추적 중인 브랜치가 없습니다."
+  echo "   Graphite가 초기화되지 않았거나 브랜치가 없을 수 있습니다."
+  echo "   먼저 Graphite를 초기화해주세요: gt repo init"
   exit 1
 fi
 
@@ -59,7 +61,7 @@ echo ""
 echo "==== STEP 1: Move할 브랜치 선택 ===="
 echo ""
 echo "[STEP 1/2] Move할 브랜치를 선택하세요:"
-echo " "스페이스바:선택/해제, i:이동, Enter:확인, Ctrl+C:취소"
+echo "스페이스바:선택/해제, i:이동, Enter:확인, Ctrl+C:취소"
 echo ""
 
 move_branches=$(echo "$all_branches" | fzf \
@@ -120,7 +122,7 @@ else
 fi
 
 # 브랜치 목록 새로고침 (Move 후 상태 반영)
-all_branches=$($GT_CMD log short | sed 's/^develop$//' | grep -v '^$' | grep -v '^develop$' | sed 's/\(needs restack\)//')
+all_branches=$($GT_CMD log short 2>&1 | sed 's/^develop$//' | grep -v '^$' | grep -v '^develop$' | sed 's/\(needs restack\)//' | grep -v 'ERROR:')
 
 if [ -z "$all_branches" ]; then
   echo "❌ 더 이상 추적 중인 브랜치가 없습니다."
@@ -131,7 +133,7 @@ echo ""
 echo "==== STEP 2: Untrack 브랜치 선택 ===="
 echo ""
 echo "[STEP 2/2] Untrack할 브랜치를 선택하세요:"
-echo " "스페이스바:선택/해제, i:이동, Enter:확인, Ctrl+C:취소"
+echo "스페이스바:선택/해제, i:이동, Enter:확인, Ctrl+C:취소"
 echo ""
 
 untrack_branches=$(echo "$all_branches" | fzf \
