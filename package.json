@@ -1,33 +1,19 @@
 {
   "name": "git-rebase-all-cli",
-  "version": "1.1.0",
-  "description": "여러 PR 브랜치를 main에 rebase하여 충돌을 자동으로 해결하는 Git 도구",
-  "type": "module",
-  "main": "dist/index.js",
+  "version": "1.0.0",
+  "description": "Git Town 브랜치 관리 스크립트 (gt-sync, gt-push-all)",
   "bin": {
-    "git-rebase-all": "dist/cli.js",
-    "gra": "dist/cli.js"
+    "gt-sync": "./gt-sync",
+    "gt-push-all": "./gt-push-all"
   },
-  "scripts": {
-    "build": "tsc && node scripts/add-shebang.js",
-    "dev": "tsc --watch",
-    "prepublishOnly": "npm run build",
-    "prepublish": "npm run build",
-    "publish:check": "npm pack --dry-run",
-    "publish:pnpm": "pnpm run build && pnpm publish",
-    "publish:public": "pnpm run build && pnpm publish --access public",
-    "version:patch": "npm version patch",
-    "version:minor": "npm version minor",
-    "version:major": "npm version major"
-  },
+  "scripts": {},
   "keywords": [
     "git",
-    "rebase",
-    "automation",
-    "cli",
+    "git-town",
     "branch",
-    "conflict",
-    "pr"
+    "automation",
+    "fzf",
+    "cli"
   ],
   "author": "Your Name <your.email@example.com>",
   "license": "MIT",
@@ -35,20 +21,12 @@
     "type": "git",
     "url": "git+https://github.com/whizzkid1452/git-rebase-all-cli.git"
   },
-  "engines": {
-    "node": ">=18.0.0"
-  },
-  "dependencies": {
-    "@inquirer/prompts": "^6.0.1",
-    "chalk": "^5.3.0",
-    "execa": "^9.4.0"
-  },
-  "devDependencies": {
-    "@types/node": "^20.14.0",
-    "typescript": "^5.8.3"
-  },
   "files": [
-    "dist",
+    "gt-sync",
+    "gt-push-all",
     "README.md"
-  ]
+  ],
+  "engines": {
+    "node": ">=14.0.0"
+  }
 }

@@ -1,6 +1,0 @@
-src/
-tsconfig.json
-*.ts
-!*.d.ts
-.gitignore
-.DS_Store

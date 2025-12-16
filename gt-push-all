@@ -1,0 +1,97 @@
+#!/bin/bash
+
+# set -e (에러 발생시 스크립트 종료 (restack 실패에도 계속 진행하여 주석 처리))
+
+# Git repository root 찾기 및 이동
+git_root=$(git rev-parse --show-toplevel 2>/dev/null) || {
+  echo "❌ Git repository를 찾을 수 없습니다. Git repository 내에서 실행해주세요."
+  exit 1
+}
+
+cd "$git_root" || {
+  echo "❌ Git repository 디렉토리로 이동할 수 없습니다."
+  exit 1
+}
+
+echo "$git_root"
+
+echo ""
+echo "Force push할 브랜치를 선택하세요:"
+echo ""
+echo " "스페이스바:선택/해제, i:이동, Enter:확인, Ctrl+C:취소"
+echo ""
+
+# 모든 브랜치 목록 가져오기 (트리 구조, 공백 및 심볼릭 제거)
+all_branches=$(gt log short | sed 's/^develop$//' | grep -v '^$' | grep -v '^develop$' | sed 's/\(needs restack\)//')
+
+if [ -z "$all_branches" ]; then
+  echo "❌ 추적 중인 브랜치가 없습니다."
+  exit 1
+fi
+
+# fzf interactive selection (multi-select 모드)
+selected_branches=$(echo "$all_branches" | fzf \
+  --multi \
+  --no-sort \
+  --reverse \
+  --marker="✔" \
+  --pointer="❯" \
+  --prompt=" Push할 브랜치 선택 ❯ " \
+  --header="스페이스바:선택/해제 | Enter: 확인 | Ctrl+A: 전체선택 | Ctrl+D: 전체해제 | ESC: 스킵" \
+  --preview='echo " 브랜치: {}"' \
+  --preview-window=up:1 \
+  --color='marker:green,pointer:blue;bg+:blue' \
+  --bind='space:toggle,ctrl-a:select-all,ctrl-d:deselect-all')
+
+# 선택된 브랜치가 없으면 종료
+if [ -z "$selected_branches" ]; then
+  echo ""
+  echo "선택된 브랜치가 없습니다. 취소합니다."
+  exit 0
+fi
+
+# 최종 확인
+echo ""
+echo "선택된 브랜치들:"
+echo "----------------------------------------"
+echo "$selected_branches"
+echo "----------------------------------------"
+echo ""
+
+read -p "위 브랜치들을 force push하시겠습니까? (y/n): " confirm
+
+case $confirm in
+  [yY]|[yY][eE][sS])
+    echo ""
+    echo "Force push 시작..."
+    echo "$git_root"
+
+    # 각 브랜치에 대해 force push
+    while IFS= read -r branch; do
+      if [ -n "$branch" ]; then
+        # 브랜치명 정리: 공백, 트리 문자, 심볼, (needs restack) 제거
+        branch=$(echo "$branch" | sed -E 's/^[*+]?[[:space:]]*//' | sed -E 's/([[:space:]])*$//' | sed 's/(needs restack)//')
+        if [ -z "$branch" ]; then
+          continue
+        fi
+        
+        echo "💬 Pushing $branch..."
+        if git push --force-with-lease origin "$branch"; then
+          echo "✅ $branch 완료"
+        else
+          echo "❌ $branch 실패"
+        fi
+      fi
+    done <<< "$selected_branches"
+
+    echo ""
+    echo "✅ 모든 브랜치 push 완료!"
+    ;;
+  *)
+    echo ""
+    echo "❌ 취소되었습니다."
+    exit 0
+    ;;
+esac
+
+# End of gt-push-all

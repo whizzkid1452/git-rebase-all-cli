@@ -1,0 +1,159 @@
+#!/bin/bash
+
+# Git repository root 찾기 및 이동
+git_root=$(git rev-parse --show-toplevel 2>/dev/null) || {
+  echo "❌ Git repository를 찾을 수 없습니다. Git repository 내에서 실행해주세요."
+  exit 1
+}
+
+cd "$git_root" || {
+  echo "❌ Git repository 디렉토리로 이동할 수 없습니다."
+  exit 1
+}
+
+echo "$git_root"
+
+# 모든 브랜치 목록 가져오기 (트리 문자열과 심볼릭 제거)
+all_branches=$(gt log short | sed 's/^develop$//' | grep -v '^$' | grep -v '^develop$' | sed 's/\(needs restack\)//')
+
+if [ -z "$all_branches" ]; then
+  echo "❌ 추적 중인 브랜치가 없습니다."
+  exit 1
+fi
+
+echo ""
+echo "==== STEP 1: Move할 브랜치 선택 ===="
+echo ""
+echo "[STEP 1/2] Move할 브랜치를 선택하세요:"
+echo " "스페이스바:선택/해제, i:이동, Enter:확인, Ctrl+C:취소"
+echo ""
+
+move_branches=$(echo "$all_branches" | fzf \
+  --multi \
+  --no-sort \
+  --reverse \
+  --marker="✔" \
+  --pointer="❯" \
+  --prompt=" Move할 브랜치 선택 ❯ " \
+  --header="스페이스바:선택/해제 | Enter: 확인 | Ctrl+A: 전체선택 | Ctrl+D: 전체해제 | ESC: 스킵" \
+  --preview='echo " 브랜치: {}"' \
+  --preview-window=up:1 \
+  --color='marker:green,pointer:blue;bg+:blue' \
+  --bind='space:toggle,ctrl-a:select-all,ctrl-d:deselect-all')
+
+# Move 처리
+if [ -n "$move_branches" ]; then
+  echo ""
+  echo "Move할 브랜치들:"
+  echo "----------------------------------------"
+  echo "$move_branches"
+  echo "----------------------------------------"
+  echo ""
+
+  read -p "위 브랜치들을 move하시겠습니까? (y/n): " confirm_move
+
+  case $confirm_move in
+    [yY]|[yY][eE][sS])
+      echo ""
+      echo "Move 시작..."
+
+      while IFS= read -r branch; do
+        if [ -n "$branch" ]; then
+          branch=$(echo "$branch" | sed -E 's/^[*+]?[[:space:]]*//' | sed -E 's/([[:space:]])*$//' | sed 's/(needs restack)//')
+          if [ -n "$branch" ]; then
+            echo "💬 Moving $branch..."
+            git checkout "$branch" && gt move < /dev/tty
+            if [ $? -eq 0 ]; then
+              echo "✅ $branch move 완료"
+            else
+              echo "❌ $branch move 실패"
+            fi
+          fi
+        fi
+      done <<< "$move_branches"
+
+      echo ""
+      echo "Move 완료!"
+      ;;
+    *)
+      echo ""
+      echo "Move 취소됨."
+      ;;
+  esac
+else
+  echo ""
+  echo "Move할 브랜치가 선택되지 않았습니다. 다음 단계로 진행합니다."
+fi
+
+# 브랜치 목록 새로고침 (Move 후 상태 반영)
+all_branches=$(gt log short | sed 's/^develop$//' | grep -v '^$' | grep -v '^develop$' | sed 's/\(needs restack\)//')
+
+if [ -z "$all_branches" ]; then
+  echo "❌ 더 이상 추적 중인 브랜치가 없습니다."
+  exit 0
+fi
+
+echo ""
+echo "==== STEP 2: Untrack 브랜치 선택 ===="
+echo ""
+echo "[STEP 2/2] Untrack할 브랜치를 선택하세요:"
+echo " "스페이스바:선택/해제, i:이동, Enter:확인, Ctrl+C:취소"
+echo ""
+
+untrack_branches=$(echo "$all_branches" | fzf \
+  --multi \
+  --no-sort \
+  --reverse \
+  --marker="✔" \
+  --pointer="❯" \
+  --prompt=" Untrack할 브랜치 선택 ❯ " \
+  --header="스페이스바:선택/해제 | Enter: 확인 | Ctrl+A: 전체선택 | Ctrl+D: 전체해제 | ESC: 스킵" \
+  --preview='echo " 브랜치: {}"' \
+  --preview-window=up:1 \
+  --color='marker:red,pointer:blue;bg+:blue' \
+  --bind='space:toggle,ctrl-a:select-all,ctrl-d:deselect-all')
+
+# Untrack 처리
+if [ -n "$untrack_branches" ]; then
+  echo ""
+  echo "Untrack할 브랜치들:"
+  echo "----------------------------------------"
+  echo "$untrack_branches"
+  echo "----------------------------------------"
+  echo ""
+
+  read -p "위 브랜치들을 untrack하시겠습니까? (y/n): " confirm_untrack
+
+  case $confirm_untrack in
+    [yY]|[yY][eE][sS])
+      echo ""
+      echo "Untrack 시작..."
+
+      while IFS= read -r branch; do
+        if [ -n "$branch" ]; then
+          branch=$(echo "$branch" | sed -E 's/^[*+]?[[:space:]]*//' | sed -E 's/([[:space:]])*$//' | sed 's/(needs restack)//')
+          if [ -n "$branch" ]; then
+            echo "💬 Untracking $branch..."
+            if gt untrack "$branch"; then
+              echo "✅ $branch untrack 완료"
+            else
+              echo "❌ $branch untrack 실패"
+            fi
+          fi
+        fi
+      done <<< "$untrack_branches"
+
+      echo ""
+      echo "Untrack 완료!"
+      ;;
+    *)
+      echo ""
+      echo "Untrack 취소됨."
+      ;;
+  esac
+else
+  echo ""
+  echo "Untrack할 브랜치가 선택되지 않았습니다."
+fi
+
+# End of gt-sync
