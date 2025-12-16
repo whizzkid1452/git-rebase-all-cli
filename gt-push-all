@@ -58,8 +58,7 @@ echo "$selected_branches"
 echo "----------------------------------------"
 echo ""
 
-echo -n "위 브랜치들을 force push하시겠습니까? (y/n): "
-read confirm
+read -p "위 브랜치들을 force push하시겠습니까? (y/n): " confirm
 
 case $confirm in
   [yY]|[yY][eE][sS])

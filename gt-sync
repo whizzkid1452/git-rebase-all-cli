@@ -14,7 +14,7 @@ cd "$git_root" || {
 echo "$git_root"
 
 # 모든 브랜치 목록 가져오기 (트리 문자열과 심볼릭 제거)
-all_branches=$(gt log short | sed 's/^develop$//' | grep -v '^$' | grep -v '^develop$' | sed 's/\(needs restack\)//')
+all_branches=$(git log short | sed 's/^develop$//' | grep -v '^$' | grep -v '^develop$' | sed 's/\(needs restack\)//')
 
 if [ -z "$all_branches" ]; then
   echo "❌ 추적 중인 브랜치가 없습니다."
@@ -50,8 +50,7 @@ if [ -n "$move_branches" ]; then
   echo "----------------------------------------"
   echo ""
 
-  echo -n "위 브랜치들을 move하시겠습니까? (y/n): "
-  read confirm_move
+  read -p "위 브랜치들을 move하시겠습니까? (y/n): " confirm_move
 
   case $confirm_move in
     [yY]|[yY][eE][sS])
@@ -123,8 +122,7 @@ if [ -n "$untrack_branches" ]; then
   echo "----------------------------------------"
   echo ""
 
-  echo -n "위 브랜치들을 untrack하시겠습니까? (y/n): "
-  read confirm_untrack
+  read -p "위 브랜치들을 untrack하시겠습니까? (y/n): " confirm_untrack
 
   case $confirm_untrack in
     [yY]|[yY][eE][sS])
