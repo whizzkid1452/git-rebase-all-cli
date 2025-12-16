@@ -74,7 +74,7 @@ selected_branches=$(echo "$all_branches" | fzf \
   --header="스페이스바:선택/해제 | Enter: 확인 | Ctrl+A: 전체선택 | Ctrl+D: 전체해제 | ESC: 스킵" \
   --preview='echo " 브랜치: {}"' \
   --preview-window=up:1 \
-  --color='marker:green,pointer:blue;bg+:blue' \
+  --color='marker:green,pointer:blue,bg+:blue' \
   --bind='space:toggle,ctrl-a:select-all,ctrl-d:deselect-all')
 
 # 선택된 브랜치가 없으면 종료
