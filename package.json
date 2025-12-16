@@ -1,6 +1,6 @@
 {
   "name": "git-rebase-all-cli",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "여러 PR 브랜치를 main에 rebase하여 충돌을 자동으로 해결하는 Git 도구",
   "type": "module",
   "main": "dist/index.js",
