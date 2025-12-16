@@ -33,7 +33,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yourusername/git-rebase-all-cli.git"
+    "url": "git+https://github.com/whizzkid1452/git-rebase-all-cli.git"
   },
   "engines": {
     "node": ">=18.0.0"
